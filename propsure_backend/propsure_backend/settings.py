@@ -24,14 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY", default="change-me-in-prod")
+SECRET_KEY = config("SECRET_KEY", default="change-me-in-production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default="False").lower() in ("true", "1", "t")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = config(
+ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1",
+    "localhost,127.0.0.1"
 ).split(",")
 
 
@@ -87,13 +87,24 @@ WSGI_APPLICATION = 'propsure_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True,
-    )
-}
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            conn_max_age=600,
+            default=DATABASE_URL,
+        )
+    }
+else:
+    # Local SQLite fallback
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -144,8 +155,8 @@ MAILERS = {
 
 
 #Added Mannually
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", str(BASE_DIR / "media"))
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -157,7 +168,9 @@ REST_FRAMEWORK = {
 }
 
 # Added manually for CORS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173"
+).split(",")
+
+CORS_ALLOW_CREDENTIALS = True
