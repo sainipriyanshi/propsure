@@ -21,8 +21,7 @@ function App() {
     setLoading(true);
     setError("");
 
-    const API_BASE = "https://propsure.onrender.com/api";
-    fetch("${API_BASE}/cases/", {
+    fetch("/api/cases/", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
