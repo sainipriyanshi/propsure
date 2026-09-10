@@ -12,12 +12,11 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class CaseSerializer(serializers.ModelSerializer):
-    documents = DocumentSerializer(many=True, read_only=True)
-
+    owner_name = serializers.CharField(source="owner.username", read_only=True)
     class Meta:
         model = Case
-        fields = ['id', 'title', 'address', 'owner', 'status', 'risk', 'created_at', 'documents']
-        read_only_fields = ['id', 'created_at', 'documents', "owner"]
+        fields = ['id', 'title','client', 'address', 'status', 'risk', 'created_at', 'documents', 'owner_name']
+        read_only_fields = ['id', 'created_at', 'documents', 'owner_name']
 
 
 class RegisterSerializer(serializers.ModelSerializer):

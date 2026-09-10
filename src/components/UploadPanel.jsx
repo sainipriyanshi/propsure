@@ -15,7 +15,7 @@ function getFileKey(file) {
 export default function UploadPanel() {
   const [caseTitle, setCaseTitle] = useState("");
   const [caseDescription, setCaseDescription] = useState("");
-  const [caseOwner, setCaseOwner] = useState("");
+  const [caseClient, setCaseClient] = useState("");
   const [caseStatus, setCaseStatus] = useState("pending");
   const [caseRisk, setCaseRisk] = useState("low");
 
@@ -171,7 +171,7 @@ export default function UploadPanel() {
     const data = await createCase({
       title: caseTitle,
       address: caseDescription,
-      owner: caseOwner,
+      client: caseClient,
       status: caseStatus,
       risk: caseRisk,
     });
@@ -295,7 +295,7 @@ async function handleCreateCase(analysisResult, file) {
   const casePayload = {
     title: `Property - ${owner || "Unknown"}`,
     address: "", // you can add an input for this later
-    owner: owner,
+    client: client,
     risk: computeRiskLevel(analysisResult.risks),
   };
 
@@ -349,9 +349,9 @@ async function handleCreateCase(analysisResult, file) {
 
         <input
           type="text"
-          placeholder="Owner name"
-          value={caseOwner}
-          onChange={(event) => setCaseOwner(event.target.value)}
+          placeholder="client Name"
+          value={caseClient}
+          onChange={(event) => setCaseClient(event.target.value)}
           required
         />
 

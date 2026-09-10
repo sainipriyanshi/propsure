@@ -9,6 +9,7 @@ class Case(models.Model):
         on_delete=models.CASCADE,
         related_name="cases",
 )
+    client = models.CharField(max_length=255)
     title = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
     status = models.CharField(max_length=50)

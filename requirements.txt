@@ -6,3 +6,6 @@ drf-nested-routers
 gunicorn
 psycopg2-binary
 dj-database-url
+whitenoise
+Pillow
+pytesseract

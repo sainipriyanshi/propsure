@@ -89,7 +89,7 @@ export default function CaseDetail() {
     <div className="case-detail">
       <h1>{caseItem.title}</h1>
       <p><strong>Address:</strong> {caseItem.address}</p>
-      <p><strong>Owner:</strong> {caseItem.owner}</p>
+      <p><strong>Client:</strong> {caseItem.client}</p>
       <p><strong>Status:</strong> {caseItem.status}</p>
       {/* Add more fields as your API provides */}
 
