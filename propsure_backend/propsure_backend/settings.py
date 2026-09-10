@@ -172,7 +172,7 @@ REST_FRAMEWORK = {
 # Added manually for CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    os.getenv("FRONTEND_URL", "http://localhost:5173"),
+    "https://propsure-frontend.onrender.com",  # your actual frontend URL when deployed
 ]
 
 CORS_ALLOW_CREDENTIALS = True
