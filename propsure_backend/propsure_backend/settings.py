@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY", default="change-me-in-production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -171,8 +171,21 @@ REST_FRAMEWORK = {
 
 # Added manually for CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "https://propsure-frontend.onrender.com",  # your actual frontend URL when deployed
+    origin.strip()
+    for origin in config(
+        "CORS_ALLOWED_ORIGINS",
+        default="http://localhost:5173,https://propsure-frontend.onrender.com",
+    ).split(",")
+    if origin.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in config(
+        "CSRF_TRUSTED_ORIGINS",
+        default="http://localhost:5173,https://propsure-frontend.onrender.com",
+    ).split(",")
+    if origin.strip()
 ]
 
 CORS_ALLOW_CREDENTIALS = True
