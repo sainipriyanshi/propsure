@@ -1,11 +1,12 @@
 // src/api/client.js
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 async function doRefresh() {
   const refreshToken = localStorage.getItem("refreshToken");
+
   if (!refreshToken) throw new Error("No refresh token");
 
-  const url = `${API_BASE}/api/token/refresh/`;
+  const url = `${API_BASE_URL}/api/token/refresh/`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -36,7 +37,7 @@ async function doRefresh() {
 let refreshPromise = null;
 
 export async function request(path, options = {}) {
-  const url = `${API_BASE}${path}`;
+  const url = `${API_BASE_URL}${path}`;
 
   let accessToken = localStorage.getItem("accessToken");
   const headers = {
@@ -72,10 +73,12 @@ export async function request(path, options = {}) {
       }
 
       await refreshPromise;
+
       accessToken = localStorage.getItem("accessToken");
 
       // Retry the original request with the new token
       const newHeaders = { ...headers };
+      
       if (accessToken) {
         newHeaders["Authorization"] = `Bearer ${accessToken}`;
       }

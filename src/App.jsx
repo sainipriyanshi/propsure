@@ -9,6 +9,7 @@ import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import { useEffect, useState } from "react";
+import { getCases } from "./api/cases";
 
 function App() {
   const [cases, setCases] = useState([]);
@@ -16,37 +17,36 @@ function App() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
+    let cancelled = false;
 
-    setLoading(true);
-    setError("");
+    async function loadCases() {
+      setLoading(true);
+      setError("");
 
-    fetch("/api/cases/", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then(async (response) => {
-        const data = await response.json();
+      try {
+        const data = await getCases();
 
-        if (!response.ok) {
-          throw new Error(`${response.status}: ${JSON.stringify(data)}`);
+        if (!cancelled) {
+          setCases(data);
         }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Could not load cases:", err);
+          setCases([]);
+          setError(err.message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
 
-        return data;
-      })
-      .then((data) => {
-        console.log("Cases from Django:", data);
-        setCases(data); // <-- save cases
-        setError(""); // <-- clear errors
-      })
-      .catch((error) => {
-        console.error("Could not load cases:", error);
-        setError(error.message); // <-- show error
-      })
-      .finally(() => {
-        setLoading(false); // <-- loading finished
-      });
+    loadCases();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -78,10 +78,18 @@ function App() {
             }
           />
 
-          <Route path="/cases/:id" element={<CaseDetail />} />
+          <Route
+            path="/cases/:id"
+            element={
+              <ProtectedRoute>
+                <CaseDetail />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/" element={<Login />} />
-          <Route path="*" element={<Navigate to="/cases" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/cases" replace />} />
         </Routes>
       </main>
     </div>
