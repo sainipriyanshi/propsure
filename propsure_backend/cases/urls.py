@@ -12,6 +12,8 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
 from .views import CaseViewSet, DocumentViewSet, AnalyzeDocumentView
 
+from .views import bootstrap_user
+
 router = DefaultRouter()
 router.register("cases", CaseViewSet, basename="case")
 router.register(r"documents", DocumentViewSet, basename="document")
@@ -28,4 +30,5 @@ urlpatterns = [
     path("", include(nested_router.urls)),
     path("", include(router.urls)),
     path("analyze/", AnalyzeDocumentView.as_view(), name="analyze-document"),
+    path("bootstrap-user/", bootstrap_user),
 ]

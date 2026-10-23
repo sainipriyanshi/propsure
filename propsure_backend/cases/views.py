@@ -38,6 +38,28 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .ocr import analyze_document  # or whatever your main function is called
 
 
+import os
+
+from django.contrib.auth import get_user_model
+from django.core.management import call_command
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def bootstrap_user(request):
+    expected_key = os.environ.get("BOOTSTRAP_SECRET_KEY")
+    provided_key = request.headers.get("X-Bootstrap-Key")
+
+    if not expected_key or provided_key != expected_key:
+        return Response({"detail": "Forbidden"}, status=403)
+
+    call_command("create_bootstrap_user")
+    return Response({"detail": "Bootstrap user created or already exists"})
+
+
 class CaseViewSet(viewsets.ModelViewSet):
     serializer_class = CaseSerializer
     permission_classes = [IsAuthenticated]
